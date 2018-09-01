@@ -15,14 +15,17 @@ import scala.concurrent.Future
 case class UnknownCommandException(command: String) extends Exception
 
 object ConsoleCommand {
+  private[this] val newCommand = "(n|new) ([0-9]+)".r
+
   def unapply(command: String): Option[GameCommand] = command.toLowerCase match {
-    case "up" | "u"    => Some(FieldUp)
-    case "down" | "d"  => Some(FieldDown)
-    case "left" | "l"  => Some(FieldLeft)
-    case "right" | "r" => Some(FieldRight)
-    case "new" | "n"   => Some(NewField)
-    case "quit" | "q"  => Some(Quit)
-    case _             => None
+    case "up" | "u"                => Some(FieldUp)
+    case "down" | "d"              => Some(FieldDown)
+    case "left" | "l"              => Some(FieldLeft)
+    case "right" | "r"             => Some(FieldRight)
+    case "new" | "n"               => Some(NewField(1000))
+    case newCommand(_, randomDeep) => Some(NewField(randomDeep.toInt))
+    case "quit" | "q"              => Some(Quit)
+    case _                         => None
   }
 }
 
@@ -49,12 +52,13 @@ class ConsoleGraph(in: BufferedReader, out: PrintStream) extends InterfaceGraph 
     case GameField(dimension, blocks, _) => printBlocks(dimension, blocks)
 
     case FinishedField(dimension) =>
-      printBlocks(dimension, ((1 to dimension * dimension - 1) :+ 0) map {
+      out.println("Game is finished!")
+      printBlocks(dimension, ((1 until dimension * dimension) :+ 0) map {
         Block(_)
       })
 
     case EmptyField(_) =>
-      out.println("Field is not initialized!")
+      out.println("Field is not initialized!\nUse command \'new <random_moves>\' to create new field!")
   }
 
   private[this] def printBlocks(dimension: Int, blocks: Seq[Block]): Unit = blocks.grouped(dimension) foreach { blocks =>
@@ -62,7 +66,7 @@ class ConsoleGraph(in: BufferedReader, out: PrintStream) extends InterfaceGraph 
     out.println()
   }
 
-  private[this] def printBlocks(blocks: Seq[Block]): Unit = blocks foreach (printBlock _)
+  private[this] def printBlocks(blocks: Seq[Block]): Unit = blocks foreach printBlock
 
   private[this] def printBlock(block: Block): Unit = block match {
     case NumberBlock(number) if number < 10 => out.print(s"0$number ")

@@ -25,9 +25,4 @@ class FieldTest extends PuzzleTest {
       Field(4, createBlocks(correctBlocks :+ 16))
     }
   }
-
-  "Random Generator" should "generate correct random field" in {
-    val field = Field(4)
-    checkField(field, 4)
-  }
 }

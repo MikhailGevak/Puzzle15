@@ -1,8 +1,6 @@
 package org.puzzle
 package field
 
-import scala.annotation.tailrec
-
 sealed trait Block
 
 case class NumberBlock(number: Int) extends Block
@@ -31,28 +29,10 @@ sealed trait Field {
 }
 
 object Field {
-  def apply(dimension: Int): Field = {
-    val random = scala.util.Random
+  private[this] def initBlocks(dimension: Int) = ((1 until dimension * dimension) :+ 0).map {
+    Block(_)
+  }.toVector
 
-    @tailrec
-    def getRandomBlock(blocks: Vector[Block], randomBlocks: Vector[Block] = Vector.empty): Vector[Block] = {
-      if (blocks.size == 0) {
-        randomBlocks
-      }
-      else {
-        val indexRandom = random.nextInt(blocks.size)
-        val nextRandom = blocks(indexRandom)
-
-        getRandomBlock(blocks.patch(indexRandom, Nil, 1), randomBlocks :+ nextRandom)
-      }
-    }
-
-    val blocks = Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15).map {
-      Block(_)
-    }.toVector
-
-    apply(dimension, blocks)
-  }
 
   def apply(dimension: Int, blocks: Vector[Block]): Field = {
     checkBlocks(dimension, blocks)
@@ -63,6 +43,12 @@ object Field {
     else {
       FinishedField(dimension)
     }
+  }
+
+  def initialGameField(dimension: Int): Field = {
+    val blocks = initBlocks(dimension)
+    checkBlocks(dimension, blocks)
+    GameField(dimension, blocks, blocks.indexOf(BlankBlock))
   }
 
   private[field] def isFinished(blocks: Vector[Block]) = blocks.sortWith {
@@ -82,7 +68,7 @@ object Field {
       case BlankBlock     => blankKey
     }
 
-    require(blocksMap.get(blankKey).toVector.flatten != 1, "It has to be one Blank Block on a field!")
+    require(blocksMap.get(blankKey).toVector.flatten.size == 1, "It has to be one Blank Block on a field!")
     val numberBlocks = blocksMap.get(numberKey).toVector.flatten.collect { case NumberBlock(number) => number }.sorted
     require(numberBlocks.size == blocksCount, s"It has to be ${blocksCount} number blocks, not ${numberBlocks.size}!")
 
@@ -92,8 +78,8 @@ object Field {
   }
 }
 
-case class GameField private[field](val dimension: Int, val blocks: Vector[Block], blankIndex: Int) extends Field
+case class GameField private[field](dimension: Int, blocks: Vector[Block], blankIndex: Int) extends Field
 
-case class FinishedField private[field](val dimension: Int) extends Field
+case class FinishedField private[field](dimension: Int) extends Field
 
-case class EmptyField(val dimension: Int) extends Field
+case class EmptyField(dimension: Int) extends Field

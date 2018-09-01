@@ -2,8 +2,9 @@ package org.puzzle.flow
 
 import akka.Done
 import akka.stream.Supervision.Directive
-import akka.stream.scaladsl.{Keep, Sink, Source}
+import akka.stream.scaladsl.{Keep, RunnableGraph, Sink, Source}
 import akka.stream.{ActorAttributes, Supervision}
+import org.puzzle.actions.FieldGenerator
 import org.puzzle.field.{EmptyField, Field}
 
 import scala.concurrent.Future
@@ -18,7 +19,7 @@ case object FieldLeft extends GameCommand
 
 case object FieldRight extends GameCommand
 
-case object NewField extends GameCommand
+case class NewField(randomDeep: Int) extends GameCommand
 
 case object Quit extends Error with GameCommand
 
@@ -37,14 +38,14 @@ case class GameGraph(interface: InterfaceGraph) {
       Supervision.Stop
   }
 
-  def game(dimension: Int) =
+  def game(dimension: Int): RunnableGraph[Future[Done]] =
     interface.source.scan[Field](EmptyField(dimension)) {
-      case (field, FieldUp)    => org.puzzle.actions.Up.doAction(field)
-      case (field, FieldDown)  => org.puzzle.actions.Down.doAction(field)
-      case (field, FieldLeft)  => org.puzzle.actions.Left.doAction(field)
-      case (field, FieldRight) => org.puzzle.actions.Right.doAction(field)
-      case (_, NewField)       => Field(dimension)
-      case (_, Quit)           => throw Quit
+      case (field, FieldUp)          => org.puzzle.actions.Up.doAction(field)
+      case (field, FieldDown)        => org.puzzle.actions.Down.doAction(field)
+      case (field, FieldLeft)        => org.puzzle.actions.Left.doAction(field)
+      case (field, FieldRight)       => org.puzzle.actions.Right.doAction(field)
+      case (_, NewField(randomDeep)) => FieldGenerator.randomField(randomDeep, dimension)
+      case (_, Quit)                 => throw Quit
     }
       .withAttributes(ActorAttributes.supervisionStrategy(interface.decider orElse decider))
       .toMat(interface.sink) {

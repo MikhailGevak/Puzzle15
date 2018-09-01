@@ -32,5 +32,7 @@ trait PuzzleTest extends FlatSpec with Matchers {
 
     case FinishedField(dimension) =>
       dimension should be(correctDim)
+    case EmptyField(dimension)    =>
+      dimension should be(correctDim)
   }
 }

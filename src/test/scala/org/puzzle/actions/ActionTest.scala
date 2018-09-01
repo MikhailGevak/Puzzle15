@@ -32,9 +32,8 @@ class ActionTest extends PuzzleTest {
       7, 3, 9, 13,
       11, 1, 15, 4)
 
-    val upF = Up.doAction(Field(4, createBlocks(before)))
     intercept[MoveBlockException] {
-      upF
+      Up.doAction(Field(4, createBlocks(before)))
     }
   }
 
@@ -65,9 +64,8 @@ class ActionTest extends PuzzleTest {
       7, 3, 9, 13,
       11, 0, 15, 4)
 
-    val upF = Down.doAction(Field(4, createBlocks(before)))
     intercept[MoveBlockException] {
-      upF
+      Down.doAction(Field(4, createBlocks(before)))
     }
   }
 
@@ -98,9 +96,8 @@ class ActionTest extends PuzzleTest {
       7, 3, 9, 13,
       0, 11, 15, 4)
 
-    val upF = Left.doAction(Field(4, createBlocks(before)))
     intercept[MoveBlockException] {
-      upF
+      Left.doAction(Field(4, createBlocks(before)))
     }
   }
 
@@ -131,9 +128,8 @@ class ActionTest extends PuzzleTest {
       7, 3, 9, 13,
       4, 11, 15, 0)
 
-    val upF = Right.doAction(Field(4, createBlocks(before)))
     intercept[MoveBlockException] {
-      upF
+      Right.doAction(Field(4, createBlocks(before)))
     }
   }
 }

@@ -9,9 +9,9 @@ object LogStage {
 }
 
 class LogStage[A](name: String, printValue: Boolean) extends GraphStage[FlowShape[A, A]] {
-  override val shape = FlowShape.of(in, out)
   val in = Inlet[A]("Log.in")
   val out = Outlet[A]("Log.out")
+  override val shape = FlowShape.of(in, out)
 
   override def createLogic(attr: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
     setHandler(in, new InHandler {

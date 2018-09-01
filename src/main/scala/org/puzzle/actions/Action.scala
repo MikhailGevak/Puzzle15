@@ -5,9 +5,8 @@ import org.puzzle.common.MoveBlockException
 import org.puzzle.field.{EmptyField, Field, FinishedField, GameField}
 
 object FieldAction {
-
   implicit class GameFieldExt(field: GameField) {
-    def switchBlank(i: Int) = {
+    private[actions] def switchBlank(i: Int) = {
       val blocks = field.blocks
       val block = blocks(i)
       val blank = blocks(field.blankIndex)
@@ -29,7 +28,7 @@ sealed trait FieldAction {
       }
 
     case field: FinishedField =>
-      throw MoveBlockException("Game is finished!", field)
+      throw MoveBlockException("You can't do any move!", field)
     case field: EmptyField    =>
       throw MoveBlockException("Game is not started!", field)
   }
