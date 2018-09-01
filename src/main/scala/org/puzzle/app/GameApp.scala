@@ -14,6 +14,7 @@ object GameApp extends App {
 
   val gameDimension = system.settings.config.getInt("game.dimension")
 
+  require(gameDimension > 1, "Game Field's dimension can be more than 1")
   val consoleGraph = new ConsoleGraph(Console.in, Console.out)
 
   GameGraph(consoleGraph).game(gameDimension).run.onComplete { _ => system.terminate() }
