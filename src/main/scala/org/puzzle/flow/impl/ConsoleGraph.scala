@@ -46,7 +46,8 @@ class ConsoleGraph(in: BufferedReader, out: PrintStream) extends InterfaceGraph 
       case command                     => throw UnknownCommandException(command)
     }
 
-  val sink: Sink[Field, Future[Done]] = Flow.fromFunction[Field, Unit](printField).toMat(Sink.ignore)(Keep.right)
+  val sink: Sink[Field, Future[Done]] = Flow.fromFunction[Field, Unit](printField)
+    .toMat(Sink.ignore)(Keep.right)
 
   private[this] def printField(field: Field): Unit = field match {
     case GameField(dimension, blocks, _) => printBlocks(dimension, blocks)

@@ -1,4 +1,4 @@
-package org.puzzle
+package org.puzzle.app
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
