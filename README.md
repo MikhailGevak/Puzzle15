@@ -1,6 +1,6 @@
 # Puzzle15. Console Mode
 
-To run game us *org.puzzle.app.GameApp* main class or *sbt run* command.
+To run game use *org.puzzle.app.GameApp* main class or *sbt run* command.
 You can move "empty place" using commands:
 - *up*
 - *down*
@@ -22,5 +22,5 @@ You can exit the game using command *quit*.
 You can use short forms of command: *n, u, d, l, r, q*.
 
 ## Game Field
-You can play using not inly 4X4 game field. You can use any square field (2x2, 3X3, 4x4).
+You can play using not only 4X4 game field. You can use any square field (2x2, 3X3, 4x4).
 To set dimension of a game field you can use *application.conf* file and parameter *game.dimension*.
